@@ -1,6 +1,6 @@
-//Christina Lovett
-//November 10, 2017
-//Assignment 7
+//Christina Lovett and Emily Vogelsperger
+//November 21, 2017
+//Final Project Check
 
 var canvas;
 var gl;
@@ -37,6 +37,17 @@ var vertices = [
         vec3(  0.5, -0.5, -0.5 )
 ];
 
+var verticesTree = [
+        vec3( -0.25, -0.25,  0.25 ), //0
+        vec3( -0.5,  0.5,  0.5 ), //1
+        vec3(  0.5,  0.5,  0.5 ), //2
+        vec3(  0.25, -0.25,  0.25 ), //3
+        vec3( -0.25, -0.25, -0.25 ), //4
+        vec3( -0.5,  0.5, -0.25 ), //5
+        vec3(  0.5,  0.5, -0.5 ), //6
+        vec3(  0.25, -0.25, -0.25 )  //7
+];
+
 var xAxis = 0;
 var yAxis = 1;
 var zAxis = 2;
@@ -45,6 +56,7 @@ var theta = [ 0, 0, -360];
 var thetaLoc;
 
 var targetMoveOne = 0.0; //value to increment first box by
+var targetMoveTwo = 0.0; //value to increment second box by
 var gameOver = false; //true until game ends
 var direction = true;
 
@@ -64,6 +76,7 @@ window.onload = function init()
     gl.useProgram( program );
 
  	textureCube();
+	textureCubeTree();
 
     var vBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
@@ -93,6 +106,14 @@ window.onload = function init()
 	initializeTexture(image, "basket.jpg", 4);
 	initializeTexture(image, "basket.jpg", 5);
 
+	//Initialize textures
+	initializeTexture(image, "tree.jpg", 6);
+	initializeTexture(image, "tree.jpg", 7);
+	initializeTexture(image, "tree.jpg", 8);
+	initializeTexture(image, "tree.jpg", 9);
+	initializeTexture(image, "tree.jpg", 10);
+	initializeTexture(image, "tree.jpg", 11);
+
     thetaLoc = gl.getUniformLocation(program, "theta");
 
     //event listeners for buttons
@@ -107,23 +128,39 @@ window.onload = function init()
         axis = zAxis;
     };
 
-		// //increments x value so it moves to the right until targetMoveOne = 50
-		// while(reverse == false){
-		// 	targetMoveOne += 0.2;
-		// 	if(targetMoveOne >= 1.0){
-		// 		reverse = true;
-		// 	}
-		// }
-		//
-		// //decrements x value so it moves to the left until targetMoveOne = -50
-		// while(reverse == true){
-		// 	targetMoveOne = targetMoveOne - 0.2;
-		// 	if(targetMoveOne <= -1.0){
-		// 		reverse = false;
-		// 	}
-		// }
-
     render();
+}
+
+function textureCubeTree()
+{
+    texture_quadTree( 1, 0, 3, 2 );
+    texture_quadTree( 2, 3, 7, 6 );
+    texture_quadTree( 3, 0, 4, 7 );
+    texture_quadTree( 6, 5, 1, 2 );
+    texture_quadTree( 4, 5, 6, 7 );
+    texture_quadTree( 5, 4, 0, 1 );
+}
+
+function texture_quadTree(a, b, c, d)
+{
+	points.push( verticesTree[a] );
+    texCoords.push( texCoord[0] );
+
+	points.push( verticesTree[b] );
+    texCoords.push( texCoord[1] );
+
+	points.push( verticesTree[c] );
+    texCoords.push( texCoord[2] );
+
+	points.push( verticesTree[a] );
+    texCoords.push( texCoord[0] );
+
+	points.push( verticesTree[c] );
+    texCoords.push( texCoord[2] );
+
+	points.push( verticesTree[d] );
+    texCoords.push( texCoord[3] );
+
 }
 
 function textureCube()
@@ -196,6 +233,14 @@ function render()
 			}
 		}
 
+		targetMoveTwo -= 0.02;
+
+		if(targetMoveTwo <= -1.0){
+			while(targetMoveTwo <= 1.0){
+				targetMoveTwo += 0.02;
+			}
+		}
+
 
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -226,9 +271,9 @@ function render()
 
 		gl.uniform3fv(thetaLoc, theta);
 
-		translations[2] = -5;
+		translations[2] = -6;
 		mvMatrix = mat4( );
-		mvMatrix = mult(mvMatrix, translate((translations[0], translations[1], translations[2])));
+		mvMatrix = mult(mvMatrix, translate((translations[0] + targetMoveTwo), translations[1], translations[2]));
 		mvMatrix = mult(mvMatrix, rotate(theta[0], 1.0, 0.0, 0.0));
 		mvMatrix = mult(mvMatrix, rotate(theta[1], 0.0, 1.0, 0.0));
 		mvMatrix = mult(mvMatrix, rotate(theta[2], 0.0, 0.0, 1.0));
@@ -236,10 +281,30 @@ function render()
 	gl.uniformMatrix4fv( modelView, false, flatten(mvMatrix) );
 			gl.uniformMatrix4fv( projection, false, flatten(pMatrix) );
 
-	//specifying textures for second cube
+		//specifying textures for first cube
 	for (var i = 0; i < numTextures; i++) {
 		gl.bindTexture( gl.TEXTURE_2D, texture[i] );
 		gl.drawArrays( gl.TRIANGLES, i*6, 6 ); //draw one side, for 6 sides
 	}
+
+	//tree cube
+
+	translations[2] = -7;
+    mvMatrix = mat4( );
+    mvMatrix = mult(mvMatrix, translate(translations[0], translations[1], translations[2]));
+    mvMatrix = mult(mvMatrix, rotate(theta[0], 1.0, 0.0, 0.0));
+    mvMatrix = mult(mvMatrix, rotate(theta[1], 0.0, 1.0, 0.0));
+    mvMatrix = mult(mvMatrix, rotate(theta[2], 0.0, 0.0, 1.0));
+
+	gl.uniformMatrix4fv( modelView, false, flatten(mvMatrix) );
+	    gl.uniformMatrix4fv( projection, false, flatten(pMatrix) );
+
+	//specifying textures for tree
+	//this currently does not work -- need to figure out how to texture map the tree
+	for (var i = 6; i < numTextures; i++) {
+		gl.bindTexture( gl.TEXTURE_2D, texture[i] );
+		gl.drawArrays( gl.TRIANGLES, i*6, 6 ); //draw one side, for 6 sides
+	}
+
     requestAnimFrame( render );
 }
