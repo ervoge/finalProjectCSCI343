@@ -6,7 +6,7 @@ inside the environment.  We used perspective projection to make it appear as if 
 The environment is randomized, so no two scenes will show up in succession.  We used random numbers to generate 
 the depth position, the X and Y positions, and the speed of the fish.
 
-CONTROLS
+CONTROLS  
 A - left  
 D - right  
 W - forward  
