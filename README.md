@@ -14,3 +14,4 @@ S - backwards
 Q - down  
 E - up  
 
+WebGL along with the textbook's WebGL library is needed in order to run this aquarium.
