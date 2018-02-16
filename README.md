@@ -7,10 +7,10 @@ The environment is randomized, so no two scenes will show up in succession.  We 
 the depth position, the X and Y positions, and the speed of the fish.
 
 CONTROLS
-A - left\n
-D - right\n
-W - forward\n
-S - backwards\n
-Q - down\n
-E - up\n
+A - left
+D - right
+W - forward
+S - backwards
+Q - down
+E - up
 
